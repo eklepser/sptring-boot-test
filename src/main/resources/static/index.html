@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои задачи</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input, button { padding: 10px; margin: 5px; }
+        .task { padding: 10px; border: 1px solid #ccc; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Мои задачи</h1>
+
+    <!-- Форма для добавления -->
+    <input type="text" id="title" placeholder="Название задачи">
+    <button onclick="addTask()">Добавить</button>
+
+    <!-- Список задач -->
+    <div id="tasks"></div>
+
+    <script>
+        // Базовый URL твоего Spring Boot сервера
+        const API_URL = 'http://localhost:8080/api/tasks';
+
+        // При загрузке страницы — загружаем задачи
+        window.onload = loadTasks;
+
+        // Загрузить все задачи
+        async function loadTasks() {
+            const res = await fetch(API_URL);
+            const tasks = await res.json();
+            const tasksDiv = document.getElementById('tasks');
+            tasksDiv.innerHTML = '';
+            tasks.forEach(task => {
+                tasksDiv.innerHTML += `
+                    <div class="task">
+                        <strong>${task.title}</strong>
+                        <em>${task.status || 'Без статуса'}</em>
+                        <button onclick="deleteTask(${task.id})">Удалить</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Добавить новую задачу
+        async function addTask() {
+            const titleInput = document.getElementById('title');
+            const title = titleInput.value.trim();
+            if (!title) return alert('Введите название задачи!');
+
+            const newTask = { title: title, status: 'TODO' };
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newTask)
+            });
+
+            titleInput.value = '';  // очистить поле
+            loadTasks();  // обновить список
+        }
+
+        // Удалить задачу
+        async function deleteTask(id) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            loadTasks();  // обновить список
+        }
+    </script>
+</body>
+</html>
