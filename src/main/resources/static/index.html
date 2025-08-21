@@ -1,16 +1,45 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная</title>
+    <title>Отправка сообщения</title>
 </head>
 <body>
 <h1>Добро пожаловать!</h1>
-<nav>
-    <a href="/">Главная</a> |
-    <a href="/about.html">О проекте</a> |
-    <a href="/tasks.html">Мои задачи</a>
-</nav>
+
+<form onsubmit="sendMessage(event)">
+    <label for="content">Оставь сообщение:</label>
+    <div>
+        <input type="text" id="content" name="content" required>
+        <button type="submit">-></button>
+    </div>
+</form>
+
+<script>
+    function sendMessage(event) {
+        event.preventDefault(); // Останавливает стандартную отправку формы
+
+        const input = document.getElementById('content'); // исправлено: было 'input'
+        const content = input.value.trim();
+
+        if (content) {
+            fetch('/api/messages/json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                input.value = ''; // очистить поле
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Не удалось отправить сообщение');
+            });
+        }
+    }
+</script>
 </body>
 </html>
