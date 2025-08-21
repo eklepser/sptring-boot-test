@@ -11,11 +11,8 @@ import java.util.List;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-    private final TaskRepository taskRepository;
-
-    public TaskController(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+    @Autowired
+    private TaskRepository taskRepository;
 
     // GET /api/tasks — получить все задачи
     @GetMapping
