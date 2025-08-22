@@ -1,1 +1,3 @@
-#### Repository for learning the basics of Spring Boot
+## Spring Boot test repository
+
+Repository for learning the basics of Spring Boot framework
